@@ -51,3 +51,4 @@ jobs:
     needs: build
     name: "Publish"
     uses: ./.github/workflows/publish.yml
+    secrets: inherit

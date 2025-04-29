@@ -38,3 +38,4 @@ jobs:
     uses: ./.github/workflows/lint-and-build.yml
     with:
       node-version: "22.4.1"
+    secrets: inherit
