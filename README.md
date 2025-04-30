@@ -26,8 +26,8 @@ Note that this LLM Proxy **is not an official project of React ChatBotify**. Wit
 This demo project exposes a total of 5 endpoints which are listed below:
 
 - `/api/v1/openai/chat/completions`
-- `/api/v1/gemini/:model:generateContent`
-- `/api/v1/gemini/:model:streamGenerateContent`
+- `/api/v1/gemini/models/:model:generateContent`
+- `/api/v1/gemini/models/:model:streamGenerateContent`
 - `/api/v1/custom`
 - `/api/v1/docs`
 
@@ -58,7 +58,7 @@ Typescript
 Deploying the project is simple with Docker.
 
 1) First, if you have not done so, create a *.env* file from the provided [*.env.template*](https://github.com/tjtanjin/llm-proxy/blob/master/.env.template) and update the variables. 
-2) If you using the project as it is (**i.e. no intended code changes**), then simply run `./deploy.sh llm-proxy` within the scripts folder and your deployment will be automatically done! Otherwise, if you wish to make code changes to the project, please read on.
+2) If you are using the project as it is (**i.e. no intended code changes**), then simply run `./deploy.sh llm-proxy` within the scripts folder and your deployment will be automatically done! Otherwise, if you wish to make code changes to the project, please read on.
 3) Once you are done with your code changes, you would have to build your own docker image with the following command (take note to replace the tag `-t` with that of your own):
     ```
     docker build -t tjtanjin/llm-proxy .
