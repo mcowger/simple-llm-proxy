@@ -15,11 +15,6 @@
     "type": "git",
     "url": "https://github.com/React-ChatBotify-Plugins/markdown-renderer"
   },
-  "peerDependencies": {
-    "react": ">=16.14.0",
-    "react-chatbotify": "^2.0.0-beta.33",
-    "react-dom": ">=16.14.0"
-  },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
     "@types/cors": "^2.8.17",
