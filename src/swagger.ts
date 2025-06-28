@@ -1,6 +1,6 @@
 const swaggerDocument = {
 	info: {
-		title: 'Gallery API Documentation',
+		title: 'LLM Proxy Documentation',
 		version: '1.0.0',
 	},
 	openapi: '3.1.0',
