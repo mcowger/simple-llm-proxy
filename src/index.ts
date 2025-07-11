@@ -12,9 +12,8 @@ import pretty from 'pino-pretty';
 
 import { CompletionRouter } from './routers/CompletionRouter';
 import { ProviderManager } from './providers/ProviderManager';
-import swaggerDocument from './swagger/swagger';
-import { ExternalService } from './services/ExternalService';
-import { providersRouter } from './routers/providers';
+import swaggerDocument  from './swagger/swagger';
+import { ProvidersRouter } from './routers/ProvidersRouter';
 
 const app = express();
 
@@ -47,7 +46,7 @@ app.use(pinoHttp({
 const providerManager = new ProviderManager(argv.providers, logger);
 const completionRouter = new CompletionRouter(providerManager, logger);
 app.use(`${API_PREFIX}/chat/completions`, completionRouter.getRouter());
-app.use(`/providers`, providersRouter);
+app.use(`/providers`, ProvidersRouter);
 
 // grab all swagger path files
 const swaggerDir = path.join(__dirname, './swagger');

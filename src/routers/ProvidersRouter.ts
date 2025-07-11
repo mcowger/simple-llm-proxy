@@ -4,14 +4,14 @@ import { Provider } from '../providers/Provider';
 import pino from 'pino';
 
 const logger = pino();
-const providersRouter = Router();
+const ProvidersRouter = Router();
 
-providersRouter.get('/list', (req, res) => {
+ProvidersRouter.get('/list', (req, res) => {
     logger.debug('GET /list route called');
     res.json(providerManager.listProviders());
 });
 
-providersRouter.get('/entry/:id', (req, res) => {
+ProvidersRouter.get('/entry/:id', (req, res) => {
     const provider = providerManager.getProvider(req.params.id);
     if (!provider) {
         return res.status(404).json({ error: 'Provider not found' });
@@ -19,7 +19,7 @@ providersRouter.get('/entry/:id', (req, res) => {
     res.json(provider);
 });
 
-providersRouter.post('/entry', (req, res) => {
+ProvidersRouter.post('/entry', (req, res) => {
     const { id, name, url, apiKey } = req.body;
     if (!id || !name || !url || !apiKey) {
         return res.status(400).json({ error: 'All fields (id, name, url, apiKey) are required.' });
@@ -32,7 +32,7 @@ providersRouter.post('/entry', (req, res) => {
     }
 });
 
-providersRouter.delete('/entry/:id', (req, res) => {
+ProvidersRouter.delete('/entry/:id', (req, res) => {
     try {
         providerManager.removeProvider(req.params.id);
         res.json({ message: 'Provider deleted successfully' });
@@ -41,7 +41,7 @@ providersRouter.delete('/entry/:id', (req, res) => {
     }
 });
 
-providersRouter.post('/default', (req, res) => {
+ProvidersRouter.post('/default', (req, res) => {
     const { id } = req.body;
     if (!id) {
         return res.status(400).json({ error: 'Provider ID is required.' });
@@ -54,7 +54,7 @@ providersRouter.post('/default', (req, res) => {
     }
 });
 
-providersRouter.get('/default', (req, res) => {
+ProvidersRouter.get('/default', (req, res) => {
     logger.debug('GET /default route called');
     const defaultProvider = providerManager.getDefaultProvider();
     if (!defaultProvider) {
@@ -63,4 +63,4 @@ providersRouter.get('/default', (req, res) => {
     res.json(defaultProvider);
 });
 
-export { providersRouter };
+export { ProvidersRouter };
