@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { config } from '../config';
 import { fetchOpenaiResponse } from '../services/openai';
+import { providerManager } from '../index';
 
 /**
  * Handles incoming requests to the /openai endpoint.
@@ -13,8 +13,10 @@ import { fetchOpenaiResponse } from '../services/openai';
 const handleOpenAI = async (req: Request, res: Response) => {
 	console.info('Request received to OpenAI endpoint.');
 
-	if (!config.openaiApiKey) {
-		return res.status(403).json('OpenAI API key not configured.');
+	const provider = providerManager.getDefaultProvider();
+
+	if (!provider) {
+		return res.status(404).json({ error: `Provider not found.` });
 	}
 
 	try {
@@ -25,13 +27,13 @@ const handleOpenAI = async (req: Request, res: Response) => {
 			res.setHeader('Cache-Control', 'no-cache');
 			res.setHeader('Connection', 'keep-alive');
 
-			await fetchOpenaiResponse(req.body, (rawDataLine) => {
+			await fetchOpenaiResponse(req.body, provider.url, provider.apiKey, (rawDataLine) => {
 				res.write(rawDataLine + '\n\n');
 			});
 
 			res.end();
 		} else {
-			const json = await fetchOpenaiResponse(req.body);
+			const json = await fetchOpenaiResponse(req.body, provider.url, provider.apiKey);
 			res.json(json);
 		}
 	} catch (err: any) {

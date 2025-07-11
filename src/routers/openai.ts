@@ -5,6 +5,6 @@ import { handleOpenAI } from '../controllers/openai';
 const openaiRouter = Router();
 
 // openai proxy endpoint
-openaiRouter.post('/openai/chat/completions', handleOpenAI);
+openaiRouter.post('/chat/completions', handleOpenAI);
 
 export { openaiRouter };

@@ -32,7 +32,7 @@ export default [
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
 
       // Code style rules
-      indent: ["error", "tab"],
+      indent: ["error", "space"],
       "max-len": ["error", { code: 120 }],
 
       // Import/export sorting

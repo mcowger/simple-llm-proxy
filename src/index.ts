@@ -5,11 +5,12 @@ import fs from 'fs';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 
-import { config } from './config';
 import { customRouter } from './routers/custom';
-import { geminiRouter } from './routers/gemini';
 import { openaiRouter } from './routers/openai';
+import { providersRouter } from './routers/providers';
 import swaggerDocument from './swagger';
+import { ProviderManager } from './providers/ProviderManager';
+import { loadProvidersFromFile } from './loadProviders';
 
 const app = express();
 
@@ -17,8 +18,12 @@ const API_PREFIX = `/api/${process.env.API_VERSION || 'v1'}`;
 app.use(bodyParser.json());
 app.use(cors());
 app.use(`${API_PREFIX}/`, openaiRouter);
-app.use(`${API_PREFIX}/`, geminiRouter);
 app.use(`${API_PREFIX}/`, customRouter);
+app.use(`${API_PREFIX}/providers`, providersRouter);
+
+// Adding default providers
+const providerManager = new ProviderManager();
+loadProvidersFromFile(providerManager);
 
 // grab all swagger path files
 const swaggerDir = path.join(__dirname, './swagger');
@@ -54,6 +59,10 @@ const loadSwaggerFiles = async () => {
 
 loadSwaggerFiles();
 
-app.listen(config.port, () => {
-	console.info(`LLM proxy service listening on port: ${config.port}`);
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+	console.info(`LLM proxy service listening on port: ${PORT}`);
 });
+
+export { providerManager };

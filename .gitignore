@@ -20,3 +20,6 @@
 
 # IntelliJ IDEA
 .idea
+
+# Ignore providers.json
+providers.json
