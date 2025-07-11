@@ -1,9 +1,56 @@
+import fs from 'fs';
 import { ProviderInterface } from './types';
 import { Provider } from './Provider';
 
 export class ProviderManager {
     private providers: Map<string, ProviderInterface> = new Map();
     private defaultProviderId: string | null = null;
+    private filePath: string;
+
+    constructor(filePath: string) {
+        this.filePath = filePath;
+        this.loadProvidersFromFile();
+    }
+
+    private loadProvidersFromFile(): void {
+        console.debug('function loadProvidersFromFile entered');
+
+        console.info(`Loading providers from file: ${this.filePath}`);
+        if (!fs.existsSync(this.filePath)) {
+            console.error(`Error: providers.json file not found at ${this.filePath}`);
+            process.exit(1);
+        }
+
+        let data: string;
+        try {
+            data = fs.readFileSync(this.filePath, 'utf-8');
+        } catch (err) {
+            console.error(`Error reading providers.json file: ${(err as Error).message}`);
+            process.exit(1);
+        }
+
+        let providers: ProviderInterface[];
+        try {
+            providers = JSON.parse(data);
+        } catch (err) {
+            console.error(`Error parsing providers.json file: ${(err as Error).message}`);
+            process.exit(1);
+        }
+
+        providers.forEach((provider) => {
+            if (!provider.id || !provider.name || !provider.url || !provider.apiKey) {
+                console.error(`Invalid provider configuration: ${JSON.stringify(provider)}`);
+                return;
+            }
+            try {
+                this.addProvider(new Provider(provider.id, provider.name, provider.url, provider.apiKey));
+            } catch (err) {
+                console.error(`Error adding provider: ${(err as Error).message}`);
+            }
+        });
+
+        console.debug('function loadProvidersFromFile ended');
+    }
 
     addProvider(provider: Provider): void {
         console.debug('function addProvider entered');
@@ -11,7 +58,7 @@ export class ProviderManager {
             throw new Error(`Provider with id ${provider.id} already exists.`);
         }
         this.providers.set(provider.id, provider);
-        console.debug(`Provider with id ${provider.id} added successfully.`);
+        console.info(`Provider with id ${provider.id} added successfully.`);
         console.debug('function addProvider ended');
     }
 

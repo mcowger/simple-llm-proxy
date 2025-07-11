@@ -12,7 +12,6 @@ import { openaiRouter } from './routers/openai';
 import { providersRouter } from './routers/providers';
 import swaggerDocument from './swagger/swagger';
 import { ProviderManager } from './providers/ProviderManager';
-import { loadProvidersFromFile } from './utils/loadProviders';
 
 const app = express();
 
@@ -34,8 +33,7 @@ const argv = yargs(hideBin(process.argv))
 	.parseSync();
 
 // Adding default providers
-const providerManager = new ProviderManager();
-loadProvidersFromFile(providerManager, argv.providers);
+const providerManager = new ProviderManager(argv.providers);
 
 // grab all swagger path files
 const swaggerDir = path.join(__dirname, './swagger');
