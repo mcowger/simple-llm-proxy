@@ -6,21 +6,21 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import pino from 'pino';
+import pinoHttp from 'pino-http';
+import pretty from 'pino-pretty';
 
-import { customRouter } from './routers/custom';
-import { openaiRouter } from './routers/openai';
-import { providersRouter } from './routers/providers';
-import swaggerDocument from './swagger/swagger';
+import { CompletionRouter } from './routers/CompletionRouter';
 import { ProviderManager } from './providers/ProviderManager';
+import swaggerDocument from './swagger/swagger';
+import { ExternalService } from './services/ExternalService';
+import { providersRouter } from './routers/providers';
 
 const app = express();
 
 const API_PREFIX = `/api/${process.env.API_VERSION || 'v1'}`;
 app.use(bodyParser.json());
 app.use(cors());
-app.use(`${API_PREFIX}/`, openaiRouter);
-app.use(`${API_PREFIX}/`, customRouter);
-app.use(`/providers`, providersRouter);
 
 // Parse command-line arguments
 const argv = yargs(hideBin(process.argv))
@@ -32,8 +32,22 @@ const argv = yargs(hideBin(process.argv))
 	.help()
 	.parseSync();
 
+// Initialize pino logger with pino-pretty for formatted logs
+const logger = pino(pretty({
+	colorize: true, // Enable colorized output
+	translateTime: 'SYS:standard', // Human-readable timestamps
+}));
+
+// Integrate pino-http with Express
+app.use(pinoHttp({
+	logger,
+}));
+
 // Adding default providers
-const providerManager = new ProviderManager(argv.providers);
+const providerManager = new ProviderManager(argv.providers, logger);
+const completionRouter = new CompletionRouter(providerManager, logger);
+app.use(`${API_PREFIX}/chat/completions`, completionRouter.getRouter());
+app.use(`/providers`, providersRouter);
 
 // grab all swagger path files
 const swaggerDir = path.join(__dirname, './swagger');
@@ -44,7 +58,7 @@ const swaggerFiles = fs
 let result = {};
 
 const loadSwaggerFiles = async () => {
-	console.debug('function loadSwaggerFiles entered');
+	logger.debug('function loadSwaggerFiles entered');
 	for (const file of swaggerFiles) {
 		const filePath = path.join(__dirname, './swagger', file);
 		const fileData = await import(filePath);
@@ -65,8 +79,8 @@ const loadSwaggerFiles = async () => {
 		swaggerUi.setup()
 	);
 
-	console.info(`Swagger docs loaded.`);
-	console.debug('function loadSwaggerFiles ended');
+	logger.info(`Swagger docs loaded.`);
+	logger.debug('function loadSwaggerFiles ended');
 };
 
 loadSwaggerFiles();
@@ -74,7 +88,7 @@ loadSwaggerFiles();
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
-	console.info(`LLM proxy service listening on port: ${PORT}`);
+	logger.info(`LLM proxy service listening on port: ${PORT}`);
 });
 
 export { providerManager };

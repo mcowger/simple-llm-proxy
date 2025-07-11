@@ -1,10 +1,13 @@
 import { Router } from 'express';
 import { providerManager } from '../index';
 import { Provider } from '../providers/Provider';
+import pino from 'pino';
 
+const logger = pino();
 const providersRouter = Router();
 
 providersRouter.get('/list', (req, res) => {
+    logger.debug('GET /list route called');
     res.json(providerManager.listProviders());
 });
 
@@ -52,7 +55,7 @@ providersRouter.post('/default', (req, res) => {
 });
 
 providersRouter.get('/default', (req, res) => {
-    console.debug('GET /default route called');
+    logger.debug('GET /default route called');
     const defaultProvider = providerManager.getDefaultProvider();
     if (!defaultProvider) {
         return res.status(404).json({ error: 'No default provider set.' });

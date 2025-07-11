@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import pino from 'pino';
 
-import { fetchOpenaiResponse } from '../services/openai';
+import { fetchOpenaiResponse } from '../services/ExternalService';
 import { providerManager } from '../index';
+
+const logger = pino();
 
 /**
  * Handles incoming requests to the /openai endpoint.
@@ -11,7 +14,7 @@ import { providerManager } from '../index';
  * @param res response object.
  */
 const handleOpenAI = async (req: Request, res: Response) => {
-	console.debug('function handleOpenAI entered');
+	logger.debug('function handleOpenAI entered');
 
 	const provider = providerManager.getDefaultProvider();
 
@@ -29,7 +32,7 @@ const handleOpenAI = async (req: Request, res: Response) => {
 
 			await fetchOpenaiResponse(req.body, provider.url, provider.apiKey, (rawDataLine) => {
 				res.write(rawDataLine + '\n\n');
-				console.debug(`Response body: ${rawDataLine}`);
+				logger.debug(`Response body: ${rawDataLine}`);
 			});
 
 			res.end();
@@ -37,15 +40,15 @@ const handleOpenAI = async (req: Request, res: Response) => {
 			const json = await fetchOpenaiResponse(req.body, provider.url, provider.apiKey);
 			res.json(json);
 
-			console.debug(`Response headers: ${JSON.stringify(res.getHeaders(), null, 2)}`);
-			console.debug(`Response body: ${JSON.stringify(json, null, 2)}`);
+			logger.debug(`Response headers: ${JSON.stringify(res.getHeaders(), null, 2)}`);
+			logger.debug(`Response body: ${JSON.stringify(json, null, 2)}`);
 		}
 	} catch (err: any) {
-		console.error('OpenAI proxy error:', err);
+		logger.error('OpenAI proxy error:', err);
 		res.status(500).json({ error: err.message || 'Internal server error' });
 	}
 
-	console.debug('function handleOpenAI ended');
+	logger.debug('function handleOpenAI ended');
 };
 
 export { handleOpenAI };
