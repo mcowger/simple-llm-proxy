@@ -8,9 +8,9 @@ import swaggerUi from 'swagger-ui-express';
 import { customRouter } from './routers/custom';
 import { openaiRouter } from './routers/openai';
 import { providersRouter } from './routers/providers';
-import swaggerDocument from './swagger';
+import swaggerDocument from './utils/swagger';
 import { ProviderManager } from './providers/ProviderManager';
-import { loadProvidersFromFile } from './loadProviders';
+import { loadProvidersFromFile } from './utils/loadProviders';
 
 const app = express();
 
@@ -26,7 +26,7 @@ const providerManager = new ProviderManager();
 loadProvidersFromFile(providerManager);
 
 // grab all swagger path files
-const swaggerDir = path.join(__dirname, './swagger');
+const swaggerDir = path.join(__dirname, './utils/swagger');
 const swaggerFiles = fs
 	.readdirSync(swaggerDir)
 	.filter((file) => (path.extname(file) === '.ts' || path.extname(file) === '.js') && !file.endsWith('.d.ts'));
@@ -36,7 +36,7 @@ let result = {};
 const loadSwaggerFiles = async () => {
 	console.debug('function loadSwaggerFiles entered');
 	for (const file of swaggerFiles) {
-		const filePath = path.join(__dirname, './swagger', file);
+		const filePath = path.join(__dirname, './utils/swagger', file);
 		const fileData = await import(filePath);
 		result = { ...result, ...fileData.default };
 	}
