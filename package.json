@@ -1,20 +1,19 @@
 {
-  "name": "llm-proxy",
-  "homepage": "https://github.com/React-ChatBotify-Plugins/markdown-renderer",
+  "name": "simple-llm-proxy",
   "version": "0.1.0",
-  "description": "A simple llm proxy demo project.",
+  "description": "A simple llm proxy to minimize costs.",
   "scripts": {
     "format": "prettier --write \"{src,test,types}/**/*.{ts,tsx,js,json,md}\"",
-    "build": "npx tsc --build",
+    "build": "npm tsc --build",
     "lint": "eslint \"{src,test,types}/**/*.ts\" --fix",
     "dev": "nodemon",
     "quicktest": "ts-node scripts/testServer.ts"
   },
-  "author": "tjtanjin",
+  "author": "mcowger",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/React-ChatBotify-Plugins/markdown-renderer"
+    "url": "https://github.com/mcowger/simple-llm-proxy.git"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
