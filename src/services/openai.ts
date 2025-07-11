@@ -14,8 +14,9 @@ const fetchOpenaiResponse = async (
 	baseURL: string,
 	apiKey: string,
 	onChunk?: (line: string) => void,
-	organizationId?: string
 ): Promise<void> => {
+	console.debug(`fetchOpenaiResponse called with:\nPayload: ${JSON.stringify(payload, null, 2)}\nBaseURL: ${baseURL}\nAPI Key: ${apiKey}`);
+
 	if (!apiKey) {
 		throw new Error('API key is not provided.');
 	}
@@ -24,9 +25,6 @@ const fetchOpenaiResponse = async (
 		Authorization: `Bearer ${apiKey}`,
 		'Content-Type': 'application/json',
 	};
-	if (organizationId) {
-		headers['OpenAI-Organization'] = organizationId;
-	}
 
 	const url = `${baseURL}/chat/completions`;
 
@@ -61,11 +59,15 @@ const fetchOpenaiResponse = async (
 				}
 			}
 		}
+		console.debug('function fetchOpenaiResponse ended');
 		return;
 	} else {
 		const json = await response.json();
+		console.debug('function fetchOpenaiResponse ended');
 		return json;
 	}
+
+
 };
 
 export { fetchOpenaiResponse };

@@ -34,6 +34,7 @@ const swaggerFiles = fs
 let result = {};
 
 const loadSwaggerFiles = async () => {
+	console.debug('function loadSwaggerFiles entered');
 	for (const file of swaggerFiles) {
 		const filePath = path.join(__dirname, './swagger', file);
 		const fileData = await import(filePath);
@@ -55,6 +56,7 @@ const loadSwaggerFiles = async () => {
 	);
 
 	console.info(`Swagger docs loaded.`);
+	console.debug('function loadSwaggerFiles ended');
 };
 
 loadSwaggerFiles();

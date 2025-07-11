@@ -5,6 +5,8 @@ import { ProviderManager } from './providers/ProviderManager';
 import { Provider } from './providers/Provider';
 
 export const loadProvidersFromFile = (providerManager: ProviderManager) => {
+    console.debug('function loadProvidersFromFile entered');
+
     const filePath = path.join(__dirname, '../providers.json');
     if (!fs.existsSync(filePath)) {
         console.warn('providers.json not found.');
@@ -25,4 +27,6 @@ export const loadProvidersFromFile = (providerManager: ProviderManager) => {
             console.error(`Error adding provider: ${(err as Error).message}`);
         }
     });
+
+    console.debug('function loadProvidersFromFile ended');
 };

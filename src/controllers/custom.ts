@@ -9,7 +9,9 @@ import { Request, Response } from 'express';
  */
 const handleCustom = async (req: Request, res: Response) => {
 	console.info('Request received to Custom endpoint.');
+	console.debug('function handleCustom entered');
 	res.json({ data: 'Hello World!' });
+	console.debug('function handleCustom ended');
 };
 
 export { handleCustom };
