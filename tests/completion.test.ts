@@ -21,7 +21,7 @@ describe('Completion Endpoint', () => {
             stdio: 'inherit',
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for the server to start
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for the server to start
     });
 
     afterAll(() => {
