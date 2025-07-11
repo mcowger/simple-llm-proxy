@@ -11,11 +11,13 @@ export class ProviderManager {
             throw new Error(`Provider with id ${provider.id} already exists.`);
         }
         this.providers.set(provider.id, provider);
+        console.debug(`Provider with id ${provider.id} added successfully.`);
         console.debug('function addProvider ended');
     }
 
     getProvider(id: string): ProviderInterface | undefined {
         console.debug('function getProvider entered');
+        console.debug(`Fetching provider with id: ${id}`);
         const provider = this.providers.get(id);
         console.debug('function getProvider ended');
         return provider;
@@ -23,6 +25,10 @@ export class ProviderManager {
 
     removeProvider(id: string): void {
         console.debug('function removeProvider entered');
+        if (!this.providers.has(id)) {
+            throw new Error(`Provider with id ${id} does not exist.`);
+        }
+        console.log(`Removing provider with id: ${id}`);
         this.providers.delete(id);
         console.debug('function removeProvider ended');
     }
@@ -32,15 +38,6 @@ export class ProviderManager {
         const providers = Array.from(this.providers.values());
         console.debug('function listProviders ended');
         return providers;
-    }
-
-    deleteProvider(id: string): void {
-        console.debug('function deleteProvider entered');
-        if (!this.providers.has(id)) {
-            throw new Error(`Provider with id ${id} does not exist.`);
-        }
-        this.providers.delete(id);
-        console.debug('function deleteProvider ended');
     }
 
     setDefaultProvider(id: string): void {

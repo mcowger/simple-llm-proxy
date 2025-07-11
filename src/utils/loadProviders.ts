@@ -1,20 +1,33 @@
 import fs from 'fs';
 import path from 'path';
-import { ProviderInterface } from './providers/types';
-import { ProviderManager } from './providers/ProviderManager';
-import { Provider } from './providers/Provider';
+import { ProviderInterface } from '../providers/types';
+import { ProviderManager } from '../providers/ProviderManager';
+import { Provider } from '../providers/Provider';
 
-export const loadProvidersFromFile = (providerManager: ProviderManager) => {
+export const loadProvidersFromFile = (providerManager: ProviderManager, filePath: string) => {
     console.debug('function loadProvidersFromFile entered');
 
-    const filePath = path.join(__dirname, '../providers.json');
+    console.debug(`Loading providers from file: ${filePath}`);
     if (!fs.existsSync(filePath)) {
-        console.warn('providers.json not found.');
-        return;
+        console.error(`Error: providers.json file not found at ${filePath}`);
+        process.exit(1);
     }
 
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const providers: ProviderInterface[] = JSON.parse(data);
+    let data: string;
+    try {
+        data = fs.readFileSync(filePath, 'utf-8');
+    } catch (err) {
+        console.error(`Error reading providers.json file: ${(err as Error).message}`);
+        process.exit(1);
+    }
+
+    let providers: ProviderInterface[];
+    try {
+        providers = JSON.parse(data);
+    } catch (err) {
+        console.error(`Error parsing providers.json file: ${(err as Error).message}`);
+        process.exit(1);
+    }
 
     providers.forEach((provider) => {
         if (!provider.id || !provider.name || !provider.url || !provider.apiKey) {

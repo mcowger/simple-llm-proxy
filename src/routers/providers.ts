@@ -31,7 +31,7 @@ providersRouter.post('/', (req, res) => {
 
 providersRouter.delete('/:id', (req, res) => {
     try {
-        providerManager.deleteProvider(req.params.id);
+        providerManager.removeProvider(req.params.id);
         res.json({ message: 'Provider deleted successfully.' });
     } catch (err: any) {
         res.status(404).json({ error: err.message });

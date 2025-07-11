@@ -4,11 +4,13 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 import { customRouter } from './routers/custom';
 import { openaiRouter } from './routers/openai';
 import { providersRouter } from './routers/providers';
-import swaggerDocument from './utils/swagger';
+import swaggerDocument from './swagger/swagger';
 import { ProviderManager } from './providers/ProviderManager';
 import { loadProvidersFromFile } from './utils/loadProviders';
 
@@ -21,12 +23,22 @@ app.use(`${API_PREFIX}/`, openaiRouter);
 app.use(`${API_PREFIX}/`, customRouter);
 app.use(`${API_PREFIX}/providers`, providersRouter);
 
+// Parse command-line arguments
+const argv = yargs(hideBin(process.argv))
+	.option('providers', {
+		type: 'string',
+		demandOption: true,
+		describe: 'Path to the providers.json file',
+	})
+	.help()
+	.parseSync();
+
 // Adding default providers
 const providerManager = new ProviderManager();
-loadProvidersFromFile(providerManager);
+loadProvidersFromFile(providerManager, argv.providers);
 
 // grab all swagger path files
-const swaggerDir = path.join(__dirname, './utils/swagger');
+const swaggerDir = path.join(__dirname, './swagger');
 const swaggerFiles = fs
 	.readdirSync(swaggerDir)
 	.filter((file) => (path.extname(file) === '.ts' || path.extname(file) === '.js') && !file.endsWith('.d.ts'));
@@ -36,7 +48,7 @@ let result = {};
 const loadSwaggerFiles = async () => {
 	console.debug('function loadSwaggerFiles entered');
 	for (const file of swaggerFiles) {
-		const filePath = path.join(__dirname, './utils/swagger', file);
+		const filePath = path.join(__dirname, './swagger', file);
 		const fileData = await import(filePath);
 		result = { ...result, ...fileData.default };
 	}
