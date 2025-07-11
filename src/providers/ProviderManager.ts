@@ -10,6 +10,11 @@ export class ProviderManager {
     constructor(filePath: string) {
         this.filePath = filePath;
         this.loadProvidersFromFile();
+        const providersArray = Array.from(this.providers.values());
+        if (providersArray.length > 0) {
+            this.defaultProviderId = providersArray[0].id;
+            console.debug(`Default provider ID initialized to: ${this.defaultProviderId}`);
+        }
     }
 
     private loadProvidersFromFile(): void {
@@ -93,18 +98,20 @@ export class ProviderManager {
             throw new Error(`Provider with id ${id} does not exist.`);
         }
         this.defaultProviderId = id;
+        console.debug(`Default provider set to: ${id}`);
+        console.debug(`Default provider ID set to: ${this.defaultProviderId}`);
         console.debug('function setDefaultProvider ended');
     }
 
     getDefaultProvider(): ProviderInterface | null {
         console.debug('function getDefaultProvider entered');
-        if (this.defaultProviderId === null) {
-            const sortedProviders = Array.from(this.providers.values()).sort((a, b) => a.id.localeCompare(b.id));
-            if (sortedProviders.length > 0) {
-                this.defaultProviderId = sortedProviders[0].id;
-            }
+        console.debug(`Current defaultProviderId: ${this.defaultProviderId}`);
+
+        if (!this.defaultProviderId) {
+            console.error('Error: Default provider ID is not set.');
         }
         const defaultProvider = this.defaultProviderId ? this.providers.get(this.defaultProviderId) || null : null;
+        console.debug(`Returning default provider: ${defaultProvider?.id || 'None'}`);
         console.debug('function getDefaultProvider ended');
         return defaultProvider;
     }

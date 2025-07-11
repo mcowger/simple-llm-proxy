@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(`${API_PREFIX}/`, openaiRouter);
 app.use(`${API_PREFIX}/`, customRouter);
-app.use(`${API_PREFIX}/providers`, providersRouter);
+app.use(`/providers`, providersRouter);
 
 // Parse command-line arguments
 const argv = yargs(hideBin(process.argv))
