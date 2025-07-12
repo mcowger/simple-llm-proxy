@@ -32,15 +32,34 @@ const argv = yargs(hideBin(process.argv))
 	.parseSync();
 
 // Initialize pino logger with pino-pretty for formatted logs
-const logger = pino(pretty({
-	colorize: true, // Enable colorized output
-	translateTime: 'SYS:standard', // Human-readable timestamps
-}));
+
+const logger = pino({
+    level: process.env.LOG_LEVEL || 'info',
+    transport: {
+        target: 'pino-pretty',
+        options: {
+            colorize: true,
+            translateTime: 'HH:MM:ss',
+            ignore: 'pid,hostname',
+        },
+    },
+});
 
 // Integrate pino-http with Express
-app.use(pinoHttp({
-	logger,
-}));
+app.use(
+    pinoHttp({
+        logger: pino(),
+        autoLogging: false,
+        transport: {
+            target: 'pino-pretty',
+            options: {
+                colorize: true,
+                translateTime: 'HH:MM:ss',
+                ignore: 'pid,hostname',
+            },
+        },
+    })
+);
 
 // Adding default providers
 const providerManager = new ProviderManager(argv.providers, logger);
@@ -57,7 +76,6 @@ const swaggerFiles = fs
 let result = {};
 
 const loadSwaggerFiles = async () => {
-	logger.debug('function loadSwaggerFiles entered');
 	for (const file of swaggerFiles) {
 		const filePath = path.join(__dirname, './swagger', file);
 		const fileData = await import(filePath);
@@ -79,7 +97,6 @@ const loadSwaggerFiles = async () => {
 	);
 
 	logger.info(`Swagger docs loaded.`);
-	logger.debug('function loadSwaggerFiles ended');
 };
 
 loadSwaggerFiles();

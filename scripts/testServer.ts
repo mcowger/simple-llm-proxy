@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const testPayload = {
     model: "openrouter/cypher-alpha:free",
+    stream: true,
     messages: [
         {
             role: "user",

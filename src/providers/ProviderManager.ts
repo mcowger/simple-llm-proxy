@@ -21,7 +21,6 @@ export class ProviderManager {
     }
 
     private loadProvidersFromFile(): void {
-        this.logger.debug('function loadProvidersFromFile entered');
 
         this.logger.info(`Loading providers from file: ${this.filePath}`);
         if (!fs.existsSync(this.filePath)) {
@@ -56,58 +55,45 @@ export class ProviderManager {
                 this.logger.error(`Error adding provider: ${(err as Error).message}`);
             }
         });
-
-        this.logger.debug('function loadProvidersFromFile ended');
     }
 
     addProvider(provider: Provider): void {
-        this.logger.debug('function addProvider entered');
         if (this.providers.has(provider.id)) {
             throw new Error(`Provider with id ${provider.id} already exists.`);
         }
         this.providers.set(provider.id, provider);
         this.logger.info(`Provider with id ${provider.id} added successfully.`);
-        this.logger.debug('function addProvider ended');
     }
 
     getProvider(id: string): ProviderInterface | undefined {
-        this.logger.debug('function getProvider entered');
+
         this.logger.debug(`Fetching provider with id: ${id}`);
         const provider = this.providers.get(id);
-        this.logger.debug('function getProvider ended');
         return provider;
     }
 
     removeProvider(id: string): void {
-        this.logger.debug('function removeProvider entered');
         if (!this.providers.has(id)) {
             throw new Error(`Provider with id ${id} does not exist.`);
         }
         this.logger.info(`Removing provider with id: ${id}`);
         this.providers.delete(id);
-        this.logger.debug('function removeProvider ended');
     }
 
     listProviders(): ProviderInterface[] {
-        this.logger.debug('function listProviders entered');
         const providers = Array.from(this.providers.values());
-        this.logger.debug('function listProviders ended');
         return providers;
     }
 
     setDefaultProvider(id: string): void {
-        this.logger.debug('function setDefaultProvider entered');
         if (!this.providers.has(id)) {
             throw new Error(`Provider with id ${id} does not exist.`);
         }
         this.defaultProviderId = id;
         this.logger.debug(`Default provider set to: ${id}`);
-        this.logger.debug(`Default provider ID set to: ${this.defaultProviderId}`);
-        this.logger.debug('function setDefaultProvider ended');
     }
 
     getDefaultProvider(): ProviderInterface | null {
-        this.logger.debug('function getDefaultProvider entered');
         this.logger.debug(`Current defaultProviderId: ${this.defaultProviderId}`);
 
         if (!this.defaultProviderId) {
@@ -115,7 +101,6 @@ export class ProviderManager {
         }
         const defaultProvider = this.defaultProviderId ? this.providers.get(this.defaultProviderId) || null : null;
         this.logger.debug(`Returning default provider: ${defaultProvider?.id || 'None'}`);
-        this.logger.debug('function getDefaultProvider ended');
         return defaultProvider;
     }
 }
