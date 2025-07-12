@@ -56,7 +56,14 @@ class CompletionRouter {
                 res.setHeader('Connection', 'keep-alive');
 
                 await this.service.processRequest(completionRequest, (rawDataLine) => {
-                    res.write(rawDataLine + '\n\n');
+                    res.write(rawDataLine + '\n\n', () => {
+                        if (rawDataLine.trim() === 'data: [DONE]') {
+                            this.logger.debug('Stream ended.');
+                        } else {
+                            const rawData = rawDataLine.replace('data: ', '');
+                            this.logger.debug(`Received Stream Chunk: \n${JSON.stringify(JSON.parse(rawData), null, 4)}`);
+                        }
+                    });
                 });
 
                 res.end();
